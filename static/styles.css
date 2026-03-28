@@ -197,8 +197,7 @@ h1 {
 
 .summary-label,
 label,
-.microcopy,
-.helper-text {
+.microcopy {
     color: var(--muted);
 }
 
@@ -237,8 +236,7 @@ textarea {
 }
 
 .preset-row,
-.code-tabs,
-.view-toggle {
+.code-tabs {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -246,8 +244,7 @@ textarea {
 }
 
 .preset,
-.tab-button,
-.view-button {
+.tab-button {
     border: 1px solid var(--line);
     background: white;
     color: var(--ink);
@@ -257,10 +254,8 @@ textarea {
 }
 
 .tab-button.active,
-.view-button.active,
 .preset:hover,
-.tab-button:hover,
-.view-button:hover {
+.tab-button:hover {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
@@ -286,12 +281,6 @@ textarea {
 .microcopy {
     margin: 12px 0 0;
     line-height: 1.7;
-}
-
-.helper-text {
-    margin: 0 0 14px;
-    line-height: 1.7;
-    font-size: 0.96rem;
 }
 
 .stack-list {
@@ -322,12 +311,6 @@ textarea {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-.api-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 12px;
-}
-
 .field-card,
 .sample-card {
     padding: 16px 18px;
@@ -341,21 +324,17 @@ textarea {
     display: block;
     margin-bottom: 6px;
     font-size: 1rem;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
 }
 
 .field-card span {
     color: var(--muted);
     font-size: 0.92rem;
-    overflow-wrap: anywhere;
 }
 
 .sample-card p {
     margin: 0;
     color: var(--muted);
     line-height: 1.7;
-    overflow-wrap: anywhere;
 }
 
 .sample-meta {
@@ -372,91 +351,6 @@ textarea {
     color: var(--accent);
     font-size: 0.78rem;
     font-weight: 700;
-}
-
-.table-shell {
-    margin-top: 14px;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    overflow: auto;
-    background: white;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 720px;
-}
-
-thead {
-    background: var(--bg-soft);
-}
-
-th,
-td {
-    text-align: left;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-    font-size: 0.95rem;
-}
-
-th {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-}
-
-td {
-    color: var(--ink);
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
-
-td a {
-    color: var(--accent);
-    text-decoration: underline;
-}
-
-.hidden {
-    display: none;
-}
-
-.raw-records-panel {
-    margin-top: 14px;
-    padding: 16px;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.7);
-}
-
-.record-link {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 12px;
-    color: var(--accent);
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.raw-panel {
-    margin-top: 14px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.72);
-    overflow: hidden;
-}
-
-.raw-panel summary {
-    padding: 14px 16px;
-    cursor: pointer;
-    font-weight: 700;
-    color: var(--ink);
-}
-
-.raw-panel pre {
-    border-radius: 0;
 }
 
 .result-block {
@@ -482,7 +376,6 @@ pre {
     overflow: auto;
     white-space: pre-wrap;
     word-break: break-word;
-    overflow-wrap: anywhere;
     font-family: "SFMono-Regular", "Menlo", monospace;
     line-height: 1.6;
 }

@@ -123,68 +123,24 @@
                                 <span>Schema fields will appear here.</span>
                             </div>
                         </div>
-                        <div class="table-shell">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Field</th>
-                                        <th>Type</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="schemaTableBody">
-                                    <tr>
-                                        <td colspan="3">Run an analysis to generate an inferred schema.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <details class="raw-panel">
-                            <summary>View raw schema JSON</summary>
-                            <pre id="schemaOutput">Run an analysis to generate an inferred schema.</pre>
-                        </details>
+                        <pre id="schemaOutput">Run an analysis to generate an inferred schema.</pre>
                     </div>
                 </div>
 
                 <div class="result-block">
                     <h3>Sample data preview</h3>
-                    <p class="helper-text">Choose how to view the extracted records from the website. This toggle only changes the sample data section below.</p>
-                    <div class="view-toggle">
-                        <button class="view-button active" data-view="cardsView">Record Cards</button>
-                        <button class="view-button" data-view="tableView">Record Table</button>
-                        <button class="view-button" data-view="schemaView">Raw Records JSON</button>
-                    </div>
-                    <div id="cardsView" class="sample-grid">
+                    <div id="sampleCards" class="sample-grid">
                         <div class="sample-card">
                             <strong>Waiting for results</strong>
                             <p>Sample records will appear here in a readable format.</p>
                         </div>
                     </div>
-                    <div id="tableView" class="table-shell hidden">
-                        <table>
-                            <thead id="sampleTableHead"></thead>
-                            <tbody id="sampleTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="schemaView" class="raw-records-panel hidden">
-                        <p class="helper-text">This is the raw extracted records payload for the sample data above.</p>
-                        <pre id="jsonOutput">Structured results will appear here.</pre>
-                    </div>
+                    <pre id="jsonOutput">Structured results will appear here.</pre>
                 </div>
 
                 <div class="result-block">
                     <h3>Generated API surface</h3>
-                    <p class="helper-text">This is separate from the sample data above. It shows the API endpoints created for the current analysis.</p>
-                    <div id="apiCards" class="api-grid">
-                        <div class="field-card">
-                            <strong>Run an analysis</strong>
-                            <span>API endpoints will appear here.</span>
-                        </div>
-                    </div>
-                    <details class="raw-panel">
-                        <summary>View raw generated API JSON</summary>
-                        <pre id="apiOutput">Generated endpoints will appear here.</pre>
-                    </details>
+                    <pre id="apiOutput">Generated endpoints will appear here.</pre>
                 </div>
             </section>
 

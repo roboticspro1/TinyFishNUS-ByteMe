@@ -14,13 +14,6 @@ const explanationText = document.getElementById("explanationText");
 const curlExample = document.getElementById("curlExample");
 const pythonExample = document.getElementById("pythonExample");
 const jsExample = document.getElementById("jsExample");
-const sampleTableHead = document.getElementById("sampleTableHead");
-const sampleTableBody = document.getElementById("sampleTableBody");
-const schemaTableBody = document.getElementById("schemaTableBody");
-const apiCards = document.getElementById("apiCards");
-const sampleCardsView = document.getElementById("cardsView");
-const tableView = document.getElementById("tableView");
-const schemaView = document.getElementById("schemaView");
 
 document.querySelectorAll(".preset").forEach((button) => {
     button.addEventListener("click", () => {
@@ -35,22 +28,6 @@ document.querySelectorAll(".tab-button").forEach((button) => {
         document.querySelectorAll(".code-example").forEach((item) => item.classList.remove("active"));
         button.classList.add("active");
         document.getElementById(button.dataset.target).classList.add("active");
-    });
-});
-
-document.querySelectorAll(".view-button").forEach((button) => {
-    button.addEventListener("click", () => {
-        document.querySelectorAll(".view-button").forEach((item) => item.classList.remove("active"));
-        button.classList.add("active");
-
-        sampleCardsView.classList.add("hidden");
-        tableView.classList.add("hidden");
-        schemaView.classList.add("hidden");
-
-        const target = document.getElementById(button.dataset.view);
-        if (target) {
-            target.classList.remove("hidden");
-        }
     });
 });
 
@@ -92,31 +69,7 @@ function renderSchema(result) {
             <span>${field.type}</span>
         </div>
     `).join("");
-    schemaTableBody.innerHTML = result.schema.fields.map((field) => `
-        <tr>
-            <td>${field.name}</td>
-            <td>${field.type}</td>
-            <td>${describeField(field.name)}</td>
-        </tr>
-    `).join("");
     schemaOutput.textContent = JSON.stringify(result.schema, null, 2);
-}
-
-function describeField(fieldName) {
-    const descriptions = {
-        id: "Internal identifier for each extracted record.",
-        title: "Primary title or headline detected on the page.",
-        summary: "Short preview text or description for the record.",
-        author: "Author or poster name when available.",
-        published_at: "Date, time, or relative timestamp found on the page.",
-        score: "Popularity score detected from the source.",
-        comments: "Comment count or discussion label from the source.",
-        url: "Direct link to the source item.",
-        image_url: "Main image associated with the record.",
-        location: "Detected place or area associated with the record.",
-        price_text: "Price text extracted from the page.",
-    };
-    return descriptions[fieldName] || "Detected field from the extracted page structure.";
 }
 
 function renderSamples(result) {
@@ -130,43 +83,12 @@ function renderSamples(result) {
         return `
             <article class="sample-card">
                 <strong>${item.title || "Untitled"}</strong>
-                <p>${item.summary || "No summary available."}</p>
+                <p>${item.summary || item.url || "No summary available."}</p>
                 <div class="sample-meta">${meta.join("")}</div>
-                ${item.url ? `<a class="record-link" href="${item.url}" target="_blank" rel="noreferrer">Open source</a>` : ""}
             </article>
         `;
     }).join("");
     jsonOutput.textContent = JSON.stringify(result.samples, null, 2);
-
-    const columns = [...new Set(result.samples.flatMap((item) => Object.keys(item)))];
-    sampleTableHead.innerHTML = `<tr>${columns.map((column) => `<th>${column}</th>`).join("")}</tr>`;
-    sampleTableBody.innerHTML = result.samples.slice(0, 8).map((item) => `
-        <tr>
-            ${columns.map((column) => {
-                const value = item[column] ?? "";
-                if (column === "url" && value) {
-                    return `<td><a href="${value}" target="_blank" rel="noreferrer">Open Link</a></td>`;
-                }
-                return `<td>${String(value)}</td>`;
-            }).join("")}
-        </tr>
-    `).join("");
-}
-
-function renderApi(result) {
-    apiCards.innerHTML = `
-        <div class="field-card">
-            <strong>Base URL</strong>
-            <span>${result.generated_api.base_url}</span>
-        </div>
-        ${result.generated_api.endpoints.map((endpoint) => `
-            <div class="field-card">
-                <strong>${endpoint}</strong>
-                <span>${result.generated_api.description}</span>
-            </div>
-        `).join("")}
-    `;
-    apiOutput.textContent = JSON.stringify(result.generated_api, null, 2);
 }
 
 function renderNotes(result) {
@@ -205,11 +127,7 @@ async function analyzeWebsite() {
     apiOutput.textContent = "Generating developer-ready endpoint design...";
     siteMap.innerHTML = `<div class="stack-card">Clustering possible landing, listing, and detail page patterns...</div>`;
     schemaCards.innerHTML = `<div class="field-card"><strong>Analyzing</strong><span>Deriving fields from extracted records.</span></div>`;
-    schemaTableBody.innerHTML = `<tr><td colspan="3">Deriving fields from extracted records.</td></tr>`;
     sampleCards.innerHTML = `<div class="sample-card"><strong>Collecting records</strong><p>Readable sample cards will appear here.</p></div>`;
-    sampleTableHead.innerHTML = "";
-    sampleTableBody.innerHTML = "";
-    apiCards.innerHTML = `<div class="field-card"><strong>Generating API</strong><span>Endpoint cards will appear here.</span></div>`;
     agentNotes.innerHTML = `<div class="stack-card">Preparing the reverse-engineering workflow...</div>`;
     renderQuickstart({
         quickstart: {
@@ -220,17 +138,13 @@ async function analyzeWebsite() {
     });
 
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 9000);
         const response = await fetch("/api/analyze", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            signal: controller.signal,
             body: JSON.stringify(payload),
         });
-        clearTimeout(timeoutId);
 
         const result = await response.json();
         if (!response.ok) {
@@ -245,22 +159,16 @@ async function analyzeWebsite() {
         renderQuickstart(result);
         renderExplanation(result);
         modeBadge.textContent = `${result.mode} mode`;
-        renderApi(result);
+        apiOutput.textContent = JSON.stringify(result.generated_api, null, 2);
     } catch (error) {
         modeBadge.textContent = "Error";
-        explanationText.textContent = error.name === "AbortError"
-            ? "The analysis took too long, so it was stopped early. Try a simpler page or run it again."
-            : "The analysis request failed. Check that the local server is running and try again.";
+        explanationText.textContent = "The analysis request failed. Check that the local server is running and try again.";
         schemaOutput.textContent = "The analysis request failed.";
-        jsonOutput.textContent = error.name === "AbortError" ? "Request timed out after 9 seconds." : error.message;
+        jsonOutput.textContent = error.message;
         apiOutput.textContent = "Please retry after checking the local server.";
         siteMap.innerHTML = `<div class="stack-card">No site map available because the analysis request failed.</div>`;
         schemaCards.innerHTML = `<div class="field-card"><strong>No schema</strong><span>The analysis did not complete.</span></div>`;
-        schemaTableBody.innerHTML = `<tr><td colspan="3">The analysis did not complete.</td></tr>`;
         sampleCards.innerHTML = `<div class="sample-card"><strong>No sample data</strong><p>The analysis did not complete.</p></div>`;
-        sampleTableHead.innerHTML = "";
-        sampleTableBody.innerHTML = "";
-        apiCards.innerHTML = `<div class="field-card"><strong>No API surface</strong><span>The analysis did not complete.</span></div>`;
         agentNotes.innerHTML = `<div class="stack-card">Unable to complete the reverse-engineering workflow.</div>`;
     } finally {
         analyzeBtn.disabled = false;

@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 import uuid
 from collections import Counter
-from time import time
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
@@ -25,13 +24,8 @@ USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36"
 )
-REQUEST_TIMEOUT = 6
+REQUEST_TIMEOUT = 12
 ANALYSIS_STORE: dict[str, dict[str, Any]] = {}
-ANALYSIS_CACHE: dict[tuple[str, str], tuple[float, dict[str, Any]]] = {}
-CACHE_TTL_SECONDS = 900
-MAX_INTERNAL_LINKS = 12
-MAX_CONTAINER_SCAN = 120
-MAX_ANCHOR_SCAN = 180
 
 
 class AnalyzeRequest(BaseModel):
@@ -78,10 +72,8 @@ def same_host_links(soup: BeautifulSoup, base_url: str) -> list[str]:
         normalized = normalize_url(absolute)
         if normalized != normalize_url(base_url):
             collected.append(normalized)
-        if len(collected) >= MAX_INTERNAL_LINKS:
-            break
 
-    return list(dict.fromkeys(collected))[:MAX_INTERNAL_LINKS]
+    return list(dict.fromkeys(collected))[:20]
 
 
 def detect_entity(goal: str, title: str, url: str) -> str:
@@ -231,7 +223,7 @@ def article_candidates_from_containers(soup: BeautifulSoup, base_url: str) -> li
     seen: set[str] = set()
     candidates: list[dict[str, Any]] = []
 
-    for container in soup.select("article, div, li")[:MAX_CONTAINER_SCAN]:
+    for container in soup.select("article, div, li"):
         headings = container.select("h1 a[href], h2 a[href], h3 a[href], h4 a[href]")
         if not headings:
             continue
@@ -263,8 +255,6 @@ def article_candidates_from_containers(soup: BeautifulSoup, base_url: str) -> li
         }
         seen.add(normalized)
         candidates.append(candidate)
-        if len(candidates) >= 8:
-            break
 
     return candidates[:12]
 
@@ -274,7 +264,7 @@ def article_candidates_from_links(soup: BeautifulSoup, base_url: str) -> list[di
     seen: set[str] = set()
     candidates: list[dict[str, Any]] = []
 
-    for anchor in soup.select("a[href]")[:MAX_ANCHOR_SCAN]:
+    for anchor in soup.select("a[href]"):
         href = urljoin(base_url, anchor.get("href", "").strip())
         normalized = normalize_url(href)
         title = clean_text(anchor.get_text(" ", strip=True))
@@ -284,8 +274,6 @@ def article_candidates_from_links(soup: BeautifulSoup, base_url: str) -> list[di
             continue
         seen.add(normalized)
         candidates.append({"title": title, "url": normalized, "summary": "", "published_at": "", "author": "", "image_url": ""})
-        if len(candidates) >= 8:
-            break
 
     return candidates[:12]
 
@@ -456,15 +444,6 @@ def build_quickstart(analysis_id: str, origin: str) -> dict[str, str]:
 
 
 def analyze_website(url: str, goal: str, origin: str) -> dict[str, Any]:
-    cache_key = (normalize_url(url), goal.strip().lower())
-    cached = ANALYSIS_CACHE.get(cache_key)
-    if cached and (time() - cached[0]) < CACHE_TTL_SECONDS:
-        cached_result = dict(cached[1])
-        cached_result["mode"] = "cached"
-        cached_result["generated_api"] = build_generated_api(cached_result["analysis_id"], cached_result["schema"]["entity"], origin)
-        cached_result["quickstart"] = build_quickstart(cached_result["analysis_id"], origin)
-        return cached_result
-
     html, response = fetch_html(url)
     soup = BeautifulSoup(html, "html.parser")
 
@@ -521,7 +500,6 @@ def analyze_website(url: str, goal: str, origin: str) -> dict[str, Any]:
     }
 
     ANALYSIS_STORE[analysis_id] = result
-    ANALYSIS_CACHE[cache_key] = (time(), result)
     return result
 
 

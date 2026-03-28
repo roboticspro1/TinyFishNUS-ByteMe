@@ -1,25 +1,20 @@
-# TinyFishNUS-ByteMe
+# Web2API Studio
 
-Web2API Studio is a hackathon prototype that turns a website into a more usable API-style data surface.
+A cleaner, demo-friendly frontend for your hackathon idea: paste a website URL, infer a schema, and show generated API endpoints.
 
 ## Run locally
 
 ```bash
-cd "/Users/atharva/Desktop/TinyFish NUS copy"
-python -m pip install -r requirements.txt
-python -m uvicorn main:app --host 127.0.0.1 --port 8010
+cd "/Users/atharva/Documents/New project/web2api-studio"
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
 ```
 
-Open [http://127.0.0.1:8010](http://127.0.0.1:8010).
-
-## What it does
-
-- analyzes a live website URL
-- infers a schema from extracted records
-- shows record cards, record table, and raw records JSON
-- generates API-style endpoints for the extracted result
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ## Notes
 
-- Best experience is local; temporary tunnels can be slower.
-- `.env`, `venv`, and caches are ignored from git.
+- The current backend is in demo mode so the site is fully runnable without external keys.
+- This is meant to give you a polished pitch surface you can extend with real TinyFish and OpenAI calls later.
