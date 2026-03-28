@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web2API Studio</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="page">
+        <header class="hero">
+            <div class="hero-top">
+                <div class="brand">
+                    <div class="brand-mark">W2A</div>
+                    <div>
+                        <p class="eyebrow">Web2API Studio</p>
+                        <h1>Turn a website into a clean, usable API.</h1>
+                    </div>
+                </div>
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    <span id="modeBadge">Demo mode ready</span>
+                </div>
+            </div>
+
+            <div class="hero-copy">
+                <p class="lead">
+                    Web2API Studio helps developers, researchers, and product teams convert messy websites into structured data products.
+                    Paste a URL, describe what data you want, and the agent will explain the site structure, infer a schema, generate sample
+                    records, and propose an API surface you can build against.
+                </p>
+                <div class="hero-points">
+                    <span>No manual selectors</span>
+                    <span>Clear schema inference</span>
+                    <span>Developer-ready output</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="section intro-section">
+                <div class="section-intro">
+                    <p class="section-label">What this product does</p>
+                    <h2>A guided reverse-engineering workflow, not just a scraper demo.</h2>
+                    <p id="explanationText" class="section-text">
+                        This dashboard explains the full product in plain English. Web2API Studio looks at a website the way a human would,
+                        identifies repeated structures like listings and detail pages, and turns those patterns into a reusable API contract.
+                    </p>
+                </div>
+
+                <div id="summaryCards" class="summary-row">
+                    <article class="summary-item">
+                        <span class="summary-label">Entity</span>
+                        <strong>Waiting</strong>
+                    </article>
+                    <article class="summary-item">
+                        <span class="summary-label">Confidence</span>
+                        <strong>--</strong>
+                    </article>
+                    <article class="summary-item">
+                        <span class="summary-label">Endpoints</span>
+                        <strong>--</strong>
+                    </article>
+                    <article class="summary-item">
+                        <span class="summary-label">Page classes</span>
+                        <strong>--</strong>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section analyzer-section">
+                <div class="section-intro">
+                    <p class="section-label">Step 1</p>
+                    <h2>Choose a website and describe the data you need.</h2>
+                </div>
+
+                <label for="url">Target website</label>
+                <input id="url" type="url" value="https://news.ycombinator.com">
+
+                <label for="goal">Extraction goal</label>
+                <textarea id="goal" rows="5">Extract the top stories and infer a reusable schema for article data.</textarea>
+
+                <div class="preset-row">
+                    <button class="preset" data-url="https://news.ycombinator.com" data-goal="Extract the top stories and infer a reusable schema for article data.">News</button>
+                    <button class="preset" data-url="https://example-store.com" data-goal="Map product pages, infer product schema, and generate list/detail endpoints.">Ecommerce</button>
+                    <button class="preset" data-url="https://example-jobs.com" data-goal="Infer job listing schema and generate a searchable jobs API.">Jobs</button>
+                    <button class="preset" data-url="https://example-homes.com" data-goal="Infer property listing data and produce a real-estate search API surface.">Real Estate</button>
+                </div>
+
+                <button id="analyzeBtn" class="primary-button">Analyze Website</button>
+                <p class="microcopy">This local demo simulates the full product flow so anyone can understand the value quickly.</p>
+            </section>
+
+            <section class="section notes-section">
+                <div class="section-intro">
+                    <p class="section-label">Step 2</p>
+                    <h2>See how the agent interprets the website.</h2>
+                </div>
+                <div id="agentNotes" class="stack-list">
+                    <div class="stack-card">Run an analysis to generate agent notes.</div>
+                </div>
+            </section>
+
+            <section class="section results-section">
+                <div class="section-intro">
+                    <p class="section-label">Step 3</p>
+                    <h2>Review the generated structure and API design.</h2>
+                </div>
+
+                <div class="results-layout">
+                    <div class="result-block">
+                        <h3>Detected page classes</h3>
+                        <div id="siteMap" class="stack-list">
+                            <div class="stack-card">No page classes yet. Run an analysis.</div>
+                        </div>
+                    </div>
+
+                    <div class="result-block">
+                        <h3>Inferred schema</h3>
+                        <div id="schemaCards" class="schema-grid">
+                            <div class="field-card">
+                                <strong>Run an analysis</strong>
+                                <span>Schema fields will appear here.</span>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schemaTableBody">
+                                    <tr>
+                                        <td colspan="3">Run an analysis to generate an inferred schema.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <details class="raw-panel">
+                            <summary>View raw schema JSON</summary>
+                            <pre id="schemaOutput">Run an analysis to generate an inferred schema.</pre>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="result-block">
+                    <h3>Sample data preview</h3>
+                    <p class="helper-text">Choose how to view the extracted records from the website. This toggle only changes the sample data section below.</p>
+                    <div class="view-toggle">
+                        <button class="view-button active" data-view="cardsView">Record Cards</button>
+                        <button class="view-button" data-view="tableView">Record Table</button>
+                        <button class="view-button" data-view="schemaView">Raw Records JSON</button>
+                    </div>
+                    <div id="cardsView" class="sample-grid">
+                        <div class="sample-card">
+                            <strong>Waiting for results</strong>
+                            <p>Sample records will appear here in a readable format.</p>
+                        </div>
+                    </div>
+                    <div id="tableView" class="table-shell hidden">
+                        <table>
+                            <thead id="sampleTableHead"></thead>
+                            <tbody id="sampleTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="schemaView" class="raw-records-panel hidden">
+                        <p class="helper-text">This is the raw extracted records payload for the sample data above.</p>
+                        <pre id="jsonOutput">Structured results will appear here.</pre>
+                    </div>
+                </div>
+
+                <div class="result-block">
+                    <h3>Generated API surface</h3>
+                    <p class="helper-text">This is separate from the sample data above. It shows the API endpoints created for the current analysis.</p>
+                    <div id="apiCards" class="api-grid">
+                        <div class="field-card">
+                            <strong>Run an analysis</strong>
+                            <span>API endpoints will appear here.</span>
+                        </div>
+                    </div>
+                    <details class="raw-panel">
+                        <summary>View raw generated API JSON</summary>
+                        <pre id="apiOutput">Generated endpoints will appear here.</pre>
+                    </details>
+                </div>
+            </section>
+
+            <section class="section developer-section">
+                <div class="section-intro">
+                    <p class="section-label">Step 4</p>
+                    <h2>Take the result and use it immediately.</h2>
+                </div>
+
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="curlExample">cURL</button>
+                    <button class="tab-button" data-target="pythonExample">Python</button>
+                    <button class="tab-button" data-target="jsExample">JavaScript</button>
+                </div>
+
+                <pre id="curlExample" class="code-example active">Run an analysis to generate integration examples.</pre>
+                <pre id="pythonExample" class="code-example">Run an analysis to generate integration examples.</pre>
+                <pre id="jsExample" class="code-example">Run an analysis to generate integration examples.</pre>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
