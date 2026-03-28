@@ -236,7 +236,8 @@ textarea {
 }
 
 .preset-row,
-.code-tabs {
+.code-tabs,
+.view-toggle {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -244,7 +245,8 @@ textarea {
 }
 
 .preset,
-.tab-button {
+.tab-button,
+.view-button {
     border: 1px solid var(--line);
     background: white;
     color: var(--ink);
@@ -254,8 +256,10 @@ textarea {
 }
 
 .tab-button.active,
+.view-button.active,
 .preset:hover,
-.tab-button:hover {
+.tab-button:hover,
+.view-button:hover {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
@@ -353,6 +357,64 @@ textarea {
     font-weight: 700;
 }
 
+.table-shell {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: auto;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+thead {
+    background: var(--bg-soft);
+}
+
+th,
+td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    font-size: 0.95rem;
+}
+
+th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+td {
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.raw-panel {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.72);
+    overflow: hidden;
+}
+
+.raw-panel summary {
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.hidden {
+    display: none;
+}
+
 .result-block {
     margin-top: 24px;
 }
@@ -376,6 +438,7 @@ pre {
     overflow: auto;
     white-space: pre-wrap;
     word-break: break-word;
+    overflow-wrap: anywhere;
     font-family: "SFMono-Regular", "Menlo", monospace;
     line-height: 1.6;
 }

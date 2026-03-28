@@ -123,19 +123,33 @@
                                 <span>Schema fields will appear here.</span>
                             </div>
                         </div>
-                        <pre id="schemaOutput">Run an analysis to generate an inferred schema.</pre>
+                        <details class="raw-panel">
+                            <summary>View raw schema JSON</summary>
+                            <pre id="schemaOutput">Run an analysis to generate an inferred schema.</pre>
+                        </details>
                     </div>
                 </div>
 
                 <div class="result-block">
                     <h3>Sample data preview</h3>
-                    <div id="sampleCards" class="sample-grid">
+                    <div class="view-toggle">
+                        <button class="view-button active" data-view="cardsView">Cards</button>
+                        <button class="view-button" data-view="tableView">Table</button>
+                        <button class="view-button" data-view="rawView">Raw JSON</button>
+                    </div>
+                    <div id="cardsView" class="sample-grid">
                         <div class="sample-card">
                             <strong>Waiting for results</strong>
                             <p>Sample records will appear here in a readable format.</p>
                         </div>
                     </div>
-                    <pre id="jsonOutput">Structured results will appear here.</pre>
+                    <div id="tableView" class="table-shell hidden">
+                        <table>
+                            <thead id="sampleTableHead"></thead>
+                            <tbody id="sampleTableBody"></tbody>
+                        </table>
+                    </div>
+                    <pre id="rawView" class="hidden">Structured results will appear here.</pre>
                 </div>
 
                 <div class="result-block">

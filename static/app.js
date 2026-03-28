@@ -14,6 +14,11 @@ const explanationText = document.getElementById("explanationText");
 const curlExample = document.getElementById("curlExample");
 const pythonExample = document.getElementById("pythonExample");
 const jsExample = document.getElementById("jsExample");
+const sampleTableHead = document.getElementById("sampleTableHead");
+const sampleTableBody = document.getElementById("sampleTableBody");
+const cardsView = document.getElementById("cardsView");
+const tableView = document.getElementById("tableView");
+const rawView = document.getElementById("rawView");
 
 document.querySelectorAll(".preset").forEach((button) => {
     button.addEventListener("click", () => {
@@ -28,6 +33,17 @@ document.querySelectorAll(".tab-button").forEach((button) => {
         document.querySelectorAll(".code-example").forEach((item) => item.classList.remove("active"));
         button.classList.add("active");
         document.getElementById(button.dataset.target).classList.add("active");
+    });
+});
+
+document.querySelectorAll(".view-button").forEach((button) => {
+    button.addEventListener("click", () => {
+        document.querySelectorAll(".view-button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        cardsView.classList.add("hidden");
+        tableView.classList.add("hidden");
+        rawView.classList.add("hidden");
+        document.getElementById(button.dataset.view).classList.remove("hidden");
     });
 });
 
@@ -73,7 +89,7 @@ function renderSchema(result) {
 }
 
 function renderSamples(result) {
-    sampleCards.innerHTML = result.samples.slice(0, 4).map((item) => {
+    cardsView.innerHTML = result.samples.slice(0, 4).map((item) => {
         const meta = [];
         if (item.author) meta.push(`<span>${item.author}</span>`);
         if (item.published_at) meta.push(`<span>${item.published_at}</span>`);
@@ -88,7 +104,21 @@ function renderSamples(result) {
             </article>
         `;
     }).join("");
-    jsonOutput.textContent = JSON.stringify(result.samples, null, 2);
+    rawView.textContent = JSON.stringify(result.samples, null, 2);
+
+    const columns = [...new Set(result.samples.flatMap((item) => Object.keys(item)))];
+    sampleTableHead.innerHTML = `<tr>${columns.map((column) => `<th>${column}</th>`).join("")}</tr>`;
+    sampleTableBody.innerHTML = result.samples.slice(0, 8).map((item) => `
+        <tr>
+            ${columns.map((column) => {
+                const value = item[column] ?? "";
+                if (column === "url" && value) {
+                    return `<td><a href="${value}" target="_blank" rel="noreferrer">Open Link</a></td>`;
+                }
+                return `<td>${String(value)}</td>`;
+            }).join("")}
+        </tr>
+    `).join("");
 }
 
 function renderNotes(result) {
@@ -123,11 +153,13 @@ async function analyzeWebsite() {
     modeBadge.textContent = "Agent running";
     explanationText.textContent = "Exploring the target website, grouping repeated pages, and inferring a reusable schema.";
     schemaOutput.textContent = "Inspecting structural patterns and building a schema candidate...";
-    jsonOutput.textContent = "Collecting representative records...";
+    rawView.textContent = "Collecting representative records...";
     apiOutput.textContent = "Generating developer-ready endpoint design...";
     siteMap.innerHTML = `<div class="stack-card">Clustering possible landing, listing, and detail page patterns...</div>`;
     schemaCards.innerHTML = `<div class="field-card"><strong>Analyzing</strong><span>Deriving fields from extracted records.</span></div>`;
-    sampleCards.innerHTML = `<div class="sample-card"><strong>Collecting records</strong><p>Readable sample cards will appear here.</p></div>`;
+    cardsView.innerHTML = `<div class="sample-card"><strong>Collecting records</strong><p>Readable sample cards will appear here.</p></div>`;
+    sampleTableHead.innerHTML = "";
+    sampleTableBody.innerHTML = "";
     agentNotes.innerHTML = `<div class="stack-card">Preparing the reverse-engineering workflow...</div>`;
     renderQuickstart({
         quickstart: {
@@ -164,11 +196,13 @@ async function analyzeWebsite() {
         modeBadge.textContent = "Error";
         explanationText.textContent = "The analysis request failed. Check that the local server is running and try again.";
         schemaOutput.textContent = "The analysis request failed.";
-        jsonOutput.textContent = error.message;
+        rawView.textContent = error.message;
         apiOutput.textContent = "Please retry after checking the local server.";
         siteMap.innerHTML = `<div class="stack-card">No site map available because the analysis request failed.</div>`;
         schemaCards.innerHTML = `<div class="field-card"><strong>No schema</strong><span>The analysis did not complete.</span></div>`;
-        sampleCards.innerHTML = `<div class="sample-card"><strong>No sample data</strong><p>The analysis did not complete.</p></div>`;
+        cardsView.innerHTML = `<div class="sample-card"><strong>No sample data</strong><p>The analysis did not complete.</p></div>`;
+        sampleTableHead.innerHTML = "";
+        sampleTableBody.innerHTML = "";
         agentNotes.innerHTML = `<div class="stack-card">Unable to complete the reverse-engineering workflow.</div>`;
     } finally {
         analyzeBtn.disabled = false;
